@@ -7,18 +7,18 @@ codeigniter-base-controller is an extended `BaseController` class to use in your
 ## Synopsis a controller that extends to adminController
 
     <?php namespace App\Controllers\Admin;
-    
+
     use App\Models\ArticleModel;
-    
+
     class Articles extends AdminController
     {
-    
+
         public function __construct()
         {
             $this->article = model('App\Models\ArticleModel');
             $this->model_class = 'article';
         }
-        
+
         /**
          * List Articles
          */
@@ -26,7 +26,7 @@ codeigniter-base-controller is an extended `BaseController` class to use in your
         {
             $this->data['articles'] = $this->article->findAll();
         }
-        
+
         /**
          * Create Article
          */
@@ -34,7 +34,7 @@ codeigniter-base-controller is an extended `BaseController` class to use in your
         {
             return $this->admin_create();
         }
-        
+
         /**
          * Update a Article
          * @param int $id The article id
@@ -43,7 +43,7 @@ codeigniter-base-controller is an extended `BaseController` class to use in your
         {
             return $this->admin_update($id);
         }
-        
+
         /**
          * Delete Article
          * @param int $id The article id
@@ -52,7 +52,7 @@ codeigniter-base-controller is an extended `BaseController` class to use in your
         {
             return $this->admin_delete($id);
         }
-        
+
     }
 
 
@@ -74,18 +74,18 @@ Or, to load a different view than the automatically guessed view:
 
 Views will be loaded into a layout. The class will look for an _app/views/layouts/backend.php_ layout file or _app/views/layouts/application.php_ depending if it's the baseController or the adminController.
 
-In case you want to override this in your controller just set your layout to whatever you want. 
+In case you want to override this in your controller just set your layout to whatever you want.
 
     $this->layout = 'layouts/yourlayout.php'
 
 In order to specify where in your layout you'd like to output the view, the rendered view will be stored in a `$yield` variable:
 
     <h1>Header</h1>
-    
+
     <div id="page">
         <?php echo view($yield) ?>
     </div>
-    
+
     <p>Footer</p>
 
 If you wish to disable the layout entirely and only display the view - a technique especially useful for AJAX requests - you can set `$this->layout` to `FALSE`.
@@ -104,23 +104,23 @@ Any variables set in `$this->data` will be passed through to both the view and t
 If you want to load helpers in your controllers in a global scope and not inside a function all your have to do is declare the helpers property as array with all your helpers, like so:
 
 
- 
+
     <?php namespace App\Controllers;
-    
+
     class Home extends AadminController
     {
         protected $helpers = ['url'];
-    
+
         public function index()
         {
         }
-    
+
     }
 
 
 ## Redirects and flashdata
 
-If you're using a structure like this you cannot redirect directly in your controllers, that must be handled by your adminController. 
+If you're using a structure like this you cannot redirect directly in your controllers, that must be handled by your adminController.
 
 Let's say you have a controller method called contacts and you want to readirect your user in case he submits a form to it.
 
@@ -131,13 +131,13 @@ Let's say you have a controller method called contacts and you want to readirect
     {
         if ( $_POST) {
             $email = \Config\Services::email();
-            
+
             $email->setFrom('your@example.com', 'Your Name');
             $email->setTo('someone@example.com');
-            
+
             $email->setSubject('Email Test');
             $email->setMessage('Testing the email class.');
-            
+
             if ($email->send() ) {
                 return [
                     'url' => '/homepage',
@@ -183,7 +183,7 @@ There's a few functions that you can use in your adminController that are not av
 
     $this->article = model('App\Models\ArticleModel');
 
-As you can see I'm loading the model into a class property called article. In this case my _$model_class_ property should also be called article. 
+As you can see I'm loading the model into a class property called article. In this case my _$model_class_ property should also be called article.
 
     $this->model_class = 'article';
 
@@ -196,7 +196,7 @@ This way if your _Article_ controller needs access to a update functionallity al
 
 This update function should always return the update result that was set on your adminController function. By default the success action of this function will always redirect to your index function in your controller. Using this structure always assume that you have a index function.
 
-This redirect will also set a confirm flasdata automatically that can be used in your views. 
+This redirect will also set a confirm flasdata automatically that can be used in your views.
 
 In case you need to override this behavior that can be done by returning a diferent result.
 
@@ -211,6 +211,12 @@ In case you need to override this behavior that can be done by returning a difer
 
 This way you're redirecting the user to your /admin/list_articles with the flashdata "your article was updated.".
 
+### Use AdminController in root directory
+
+In case you want to use AdminController in root directory, or any other directory change the $directory property.
+
+    protected $directory = ''; // Set default directory
+
 ## Add your own language variables
 
 The CRUD methods now support the use of language variables. Those should be se in your _app/languages_ folder depending on your locales settings. For now the following languages are supported:
@@ -220,11 +226,11 @@ The CRUD methods now support the use of language variables. Those should be se i
 
 ## Error Helper
 
-In your _adminController.php_ there's a custom helper being loaded called error helper. That should be placed in your helpers folder and it's only purpose is to serve as a shortcut for the 404 exception. 
+In your _adminController.php_ there's a custom helper being loaded called error helper. That should be placed in your helpers folder and it's only purpose is to serve as a shortcut for the 404 exception.
 
     // This is just the same thing
     show_404();
-    // as 
+    // as
     throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
 
 You can now use this on your controllers too everytime you need to show a 404 error. Since its autoloaded on your adminController.
